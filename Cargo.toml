@@ -1,0 +1,9 @@
+[package]
+name = "generic_graph"
+version = "0.1.0"
+authors = ["KayJay7 <kayjay7crates@protonmail.com>"]
+edition = "2018"
+license = "LGPL-3.0-or-later"
+description = "A library for implementing general purpose graphs. Including some default implementation (the latter are still WIP)"
+
+[dependencies]
