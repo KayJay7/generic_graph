@@ -1,3 +1,8 @@
+//!This module provide an implementation of a growable directed graph.
+//! The graph is implemented as a set of adjacency list (list of vertex adjacent to one vertex).
+//!
+//!These lists consists of HashMaps, allowing the graph to grow to a considerable size while still
+//! maintaining a certain speed. Though it is not indicated for small or not growing graphs
 use super::{DirectedGraph, VariableEdges, VariableVertexes, SimpleVertex, Edge};
 use std::collections::HashMap;
 use std::hash::Hash;
@@ -7,7 +12,8 @@ use std::ops::Sub;
 pub mod elements;
 use elements::*;
 
-
+//The type AdjacencyList is a private type meant to associate a vertex
+// to its adjacency list
 struct AdjacencyList<K, V, W>
     where K: Hash + Eq + Clone,
           W: Sum + Sub + Eq + Ord + Copy,
@@ -16,6 +22,7 @@ struct AdjacencyList<K, V, W>
     list: HashMap<CompoundKey<K>, DirectedEdge<K, W>>,
 }
 
+//TODO documentation + implement VariableEdges and VariableVertexes for this type
 pub struct AdjacencyGraph<K, V, W>
     where K: Hash + Eq + Clone,
           W: Sum + Sub + Eq + Ord + Copy,

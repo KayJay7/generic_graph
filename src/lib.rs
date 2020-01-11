@@ -155,6 +155,8 @@ pub struct SimpleVertex<K: Hash + Eq + Clone, V> {
 }
 
 impl<K: Hash + Eq + Clone, V> SimpleVertex<K, V> {
+
+    ///Creates a new instance of SimpleVertex
     pub fn new(key: K, value: V) -> SimpleVertex<K, V> {
         SimpleVertex {
             key,
@@ -164,14 +166,18 @@ impl<K: Hash + Eq + Clone, V> SimpleVertex<K, V> {
 }
 
 impl<K: Hash + Eq + Clone, V> Vertex<K, V> for SimpleVertex<K, V> {
+
+    ///Get the value stored in a vertex
     fn get_value(&self) -> &V {
         &(self.value)
     }
 
+    ///Get the value as mutable reference
     fn get_mutable(&mut self) -> &mut V {
         &mut (self.value)
     }
 
+    ///Returns the key of the vertex
     fn key(&self) -> K {
         self.key.clone()
     }
