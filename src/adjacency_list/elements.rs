@@ -2,6 +2,7 @@ use crate::Edge;
 pub use crate::SimpleVertex as DirectedVertex;
 use std::hash::Hash;
 use std::iter::Sum;
+use std::ops::Sub;
 
 #[derive(Hash, Eq, PartialEq, Clone, Debug)]
 pub struct CompoundKey<K: Hash + Eq + Clone> {
@@ -12,14 +13,14 @@ pub struct CompoundKey<K: Hash + Eq + Clone> {
 #[derive(Eq, PartialEq, Clone, Debug)]
 pub struct DirectedEdge<K, W>
     where K: Hash + Eq + Clone,
-          W: Sum + Eq + Ord + Copy,
+          W: Sum + Sub + Eq + Ord + Copy,
 {
     left: K,
     right: K,
     weight: W,
 }
 
-impl<K: Hash + Eq + Clone, W: Sum + Eq + Ord + Copy> DirectedEdge<K, W> {
+impl<K: Hash + Eq + Clone, W: Sum + Sub + Eq + Ord + Copy> DirectedEdge<K, W> {
     pub fn new(left: K, right: K, weight: W) -> DirectedEdge<K, W> {
         DirectedEdge {
             left,
@@ -29,7 +30,7 @@ impl<K: Hash + Eq + Clone, W: Sum + Eq + Ord + Copy> DirectedEdge<K, W> {
     }
 }
 
-impl<K: Hash + Eq + Clone, W: Sum + Eq + Ord + Copy> Edge<K, W, CompoundKey<K>> for DirectedEdge<K, W> {
+impl<K: Hash + Eq + Clone, W: Sum + Sub + Eq + Ord + Copy> Edge<K, W, CompoundKey<K>> for DirectedEdge<K, W> {
     fn get_weight(&self) -> W {
         self.weight
     }
