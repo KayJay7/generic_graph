@@ -6,8 +6,7 @@
 use super::{DirectedGraph, VariableEdges, VariableVertexes, SimpleVertex, Edge};
 use std::collections::HashMap;
 use std::hash::Hash;
-use std::iter::Sum;
-use std::ops::Sub;
+use std::ops::{Add, Sub};
 
 pub mod elements;
 use elements::*;
@@ -16,7 +15,7 @@ use elements::*;
 // to its adjacency list
 struct AdjacencyList<K, V, W>
     where K: Hash + Eq + Clone,
-          W: Sum + Sub + Eq + Ord + Copy,
+          W: Add + Sub + Eq + Ord + Copy,
 {
     vertex: DirectedVertex<K, V>,
     list: HashMap<CompoundKey<K>, DirectedEdge<K, W>>,
@@ -25,12 +24,12 @@ struct AdjacencyList<K, V, W>
 //TODO documentation + implement VariableEdges and VariableVertexes for this type
 pub struct AdjacencyGraph<K, V, W>
     where K: Hash + Eq + Clone,
-          W: Sum + Sub + Eq + Ord + Copy,
+          W: Add + Sub + Eq + Ord + Copy,
 {
     vertexes: HashMap<K, AdjacencyList<K, V, W>>,
 }
 
-impl<K: Hash + Eq + Clone, V, W: Sum + Sub + Eq + Ord + Copy> AdjacencyGraph<K, V, W> {
+impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> AdjacencyGraph<K, V, W> {
     pub fn new() -> AdjacencyGraph<K, V, W>{
         AdjacencyGraph {
             vertexes: HashMap::new()
@@ -38,7 +37,7 @@ impl<K: Hash + Eq + Clone, V, W: Sum + Sub + Eq + Ord + Copy> AdjacencyGraph<K, 
     }
 }
 
-impl<K: Hash + Eq + Clone, V, W: Sum + Sub + Eq + Ord + Copy> DirectedGraph<
+impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> DirectedGraph<
     DirectedVertex<K, V>,
     DirectedEdge<K, W>,
     K, V, W,

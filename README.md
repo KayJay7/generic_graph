@@ -14,7 +14,7 @@ The defined traits are here descripted. Documentation is yet to be added in the 
 pub trait DirectedGraph<T, E, K, V, W, C>
     where K: Hash + Eq + Clone,
           C: Hash + Eq + Clone,
-          W: Sum + Sub + Eq + Ord + Copy,
+          W: Add + Sub + Eq + Ord + Copy,
           T: Vertex<K, V>,
           E: Edge<K, W, C>
 {
@@ -47,7 +47,7 @@ This is the main trait defined in this library. It is intended for implementing 
 pub trait Graph<T, E, K, V, W, C>: DirectedGraph<T, E, K, V, W, C>
     where K: Hash + Eq + Clone,
           C: Hash + Eq + Clone,
-          W: Sum + Sub + Eq + Ord + Copy,
+          W: Add + Sub + Eq + Ord + Copy,
           T: Vertex<K, V>,
           E: Edge<K, W, C>
 {}
@@ -67,7 +67,7 @@ This following properties must be held true:
 pub trait VariableVertexes<T, E, K, V, W, C>: DirectedGraph<T, E, K, V, W, C>
     where K: Hash + Eq + Clone,
           C: Hash + Eq + Clone,
-          W: Sum + Sub + Eq + Ord + Copy,
+          W: Add + Sub + Eq + Ord + Copy,
           T: Vertex<K, V>,
           E: Edge<K, W, C>
 {
@@ -90,7 +90,7 @@ The remove method shall return None if the element was not found, or Some(elemen
 pub trait VariableEdges<T, E, K, V, W, C>: DirectedGraph<T, E, K, V, W, C>
     where K: Hash + Eq + Clone,
           C: Hash + Eq + Clone,
-          W: Sum + Sub + Eq + Ord + Copy,
+          W: Add + Sub + Eq + Ord + Copy,
           T: Vertex<K, V>,
           E: Edge<K, W, C>
 {
@@ -131,7 +131,7 @@ It is not required to implement copy, but it's suggested.
 pub trait Edge<K, W, C>
     where K: Hash + Eq + Clone,
           C: Hash + Eq + Clone,
-          W: Sum + Sub + Eq + Ord + Copy
+          W: Add + Sub + Eq + Ord + Copy
 {
     fn get_weight(&self) -> W;
 

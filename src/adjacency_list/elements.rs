@@ -7,8 +7,7 @@
 use crate::Edge;
 pub use crate::SimpleVertex as DirectedVertex;
 use std::hash::Hash;
-use std::iter::Sum;
-use std::ops::Sub;
+use std::ops::{Add, Sub};
 
 ///The CompoundKey type is the type designated as edge key. It consist of two generic keys of the
 /// same type, representing the key of two adjacent Vertexes.
@@ -29,14 +28,14 @@ pub struct CompoundKey<K: Hash + Eq + Clone> {
 #[derive(Eq, PartialEq, Clone, Debug)]
 pub struct DirectedEdge<K, W>
     where K: Hash + Eq + Clone,
-          W: Sum + Sub + Eq + Ord + Copy,
+          W: Add + Sub + Eq + Ord + Copy,
 {
     left: K,
     right: K,
     weight: W,
 }
 
-impl<K: Hash + Eq + Clone, W: Sum + Sub + Eq + Ord + Copy> DirectedEdge<K, W> {
+impl<K: Hash + Eq + Clone, W: Add + Sub + Eq + Ord + Copy> DirectedEdge<K, W> {
 
     ///Returns an instance of Directed edge with the specified weight and pair of vertex keys
     pub fn new(left: K, right: K, weight: W) -> DirectedEdge<K, W> {
@@ -48,7 +47,7 @@ impl<K: Hash + Eq + Clone, W: Sum + Sub + Eq + Ord + Copy> DirectedEdge<K, W> {
     }
 }
 
-impl<K: Hash + Eq + Clone, W: Sum + Sub + Eq + Ord + Copy> Edge<K, W, CompoundKey<K>> for DirectedEdge<K, W> {
+impl<K: Hash + Eq + Clone, W: Add + Sub + Eq + Ord + Copy> Edge<K, W, CompoundKey<K>> for DirectedEdge<K, W> {
 
     ///Returns a copy of the weight (the weight type is required to implement Copy)
     fn get_weight(&self) -> W {

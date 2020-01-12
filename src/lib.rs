@@ -7,8 +7,7 @@
 //!All traits make large use of generic types, allowing for deep customization of the graph structure
 //!
 use std::hash::Hash;
-use std::iter::Sum;
-use std::ops::Sub;
+use std::ops::{Add, Sub};
 
 pub mod adjacency_list;
 
@@ -37,7 +36,7 @@ pub trait Vertex<K, V>
 pub trait Edge<K, W, C>
     where K: Hash + Eq + Clone,
           C: Hash + Eq + Clone,
-          W: Sum + Sub + Eq + Ord + Copy
+          W: Add + Sub + Eq + Ord + Copy
 {
     fn get_weight(&self) -> W;
 
@@ -69,7 +68,7 @@ pub trait Edge<K, W, C>
 pub trait DirectedGraph<T, E, K, V, W, C>
     where K: Hash + Eq + Clone,
           C: Hash + Eq + Clone,
-          W: Sum + Sub + Eq + Ord + Copy,
+          W: Add + Sub + Eq + Ord + Copy,
           T: Vertex<K, V>,
           E: Edge<K, W, C>
 {
@@ -95,7 +94,7 @@ pub trait DirectedGraph<T, E, K, V, W, C>
 pub trait VariableEdges<T, E, K, V, W, C>: DirectedGraph<T, E, K, V, W, C>
     where K: Hash + Eq + Clone,
           C: Hash + Eq + Clone,
-          W: Sum + Sub + Eq + Ord + Copy,
+          W: Add + Sub + Eq + Ord + Copy,
           T: Vertex<K, V>,
           E: Edge<K, W, C>
 {
@@ -111,7 +110,7 @@ pub trait VariableEdges<T, E, K, V, W, C>: DirectedGraph<T, E, K, V, W, C>
 pub trait VariableVertexes<T, E, K, V, W, C>: DirectedGraph<T, E, K, V, W, C>
     where K: Hash + Eq + Clone,
           C: Hash + Eq + Clone,
-          W: Sum + Sub + Eq + Ord + Copy,
+          W: Add + Sub + Eq + Ord + Copy,
           T: Vertex<K, V>,
           E: Edge<K, W, C>
 {
@@ -133,7 +132,7 @@ pub trait VariableVertexes<T, E, K, V, W, C>: DirectedGraph<T, E, K, V, W, C>
 pub trait Graph<T, E, K, V, W, C>: DirectedGraph<T, E, K, V, W, C>
     where K: Hash + Eq + Clone,
           C: Hash + Eq + Clone,
-          W: Sum + Sub + Eq + Ord + Copy,
+          W: Add + Sub + Eq + Ord + Copy,
           T: Vertex<K, V>,
           E: Edge<K, W, C>
 {}
