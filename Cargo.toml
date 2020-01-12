@@ -1,6 +1,6 @@
 [package]
 name = "generic_graph"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["KayJay7 <kayjay7crates@protonmail.com>"]
 edition = "2018"
 license = "LGPL-3.0-or-later"
