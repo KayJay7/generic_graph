@@ -8,7 +8,6 @@
 //!
 use std::hash::Hash;
 use std::ops::{Add, Sub};
-
 pub mod adjacency_list;
 
 ///Generic behaviour of a vertex
@@ -99,8 +98,11 @@ pub trait VariableEdges<T, E, K, V, W, C>: DirectedGraph<T, E, K, V, W, C>
           E: Edge<K, W, C>
 {
     ///If an edge with an equal key is already present, the edge is updated (not the key)
-    /// and the old edge is returned ad Some(old_edge). If not present None is returned.
-    fn add_edge(&mut self, edge: E) -> Option<E>;
+    /// and the old edge is returned ad Ok(Some(old_edge)). If not present OK(None) is returned.
+    ///
+    ///If one or both of the concerned vertexes are missing an error will be returned containing
+    /// an enum specifying which side is missing
+    fn add_edge(&mut self, edge: E) -> Result<Option<E>, EdgeSide>;
 
     ///If the removed edge was present it's removed and returned as Some(edge). Otherwise None is returned
     fn remove_edge(&mut self, pair: (&K, &K)) -> Option<E>;
@@ -162,6 +164,17 @@ impl<K: Hash + Eq + Clone, V> SimpleVertex<K, V> {
             value,
         }
     }
+}
+
+///`EdgeSide` is used to indicate which side of the edge caused an error.
+/// Usually returned as Result::Err(EdgeSide) by the VariableEdges::add_edge() method when
+/// it was impossible to add the edge due to the absence of one of the concerned vertexes.
+///
+///Can be used by user defined functions or types for error handling.
+pub enum EdgeSide {
+    Left,
+    Right,
+    Both
 }
 
 ///`SimpleVertex` implement the Vertex trait maintaining the key type and the value type generics

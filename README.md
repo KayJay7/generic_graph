@@ -94,7 +94,7 @@ pub trait VariableEdges<T, E, K, V, W, C>: DirectedGraph<T, E, K, V, W, C>
           T: Vertex<K, V>,
           E: Edge<K, W, C>
 {
-    fn add_edge(&mut self, edge: E) -> Option<E>;
+    fn add_edge(&mut self, edge: E) -> Result<Option<E>, EdgeSide>;
 
     fn remove_edge(&mut self, pair: (&K, &K)) -> Option<E>;
 }
@@ -103,8 +103,9 @@ pub trait VariableEdges<T, E, K, V, W, C>: DirectedGraph<T, E, K, V, W, C>
 
 This trait adds the add and remove methods for edges. Must be implemented in graphs with a variable number of edges
 
-The add method shall return None if the element was not previously set. Otherwise the element shall be updated (but no the key) 
-and the old element shall be returned as Some(old_element). 
+The add method shall return Ok(None) if the element was not previously set. Otherwise the element shall be updated (but no the key) 
+and the old element shall be returned as Ok(Some(old_element)). If one or both of the concerned vertexes are missing an error
+containing an enum specifying which side is missing
 
 The remove method shall return None if the element was not found, or Some(element) if it was found.
 

@@ -10,7 +10,7 @@ use std::ops::{Add, Sub};
 
 pub mod elements;
 use elements::*;
-use crate::Vertex;
+use crate::{Vertex, EdgeSide};
 
 //The type AdjacencyList is a private type meant to associate a vertex
 // to its adjacency list
@@ -211,6 +211,7 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> VariableVertexes<
     }
 }
 
+//TODO document the VariableEdges implementation for AdjacencyList
 impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> VariableEdges<
     DirectedVertex<K, V>,
     DirectedEdge<K, W>,
@@ -218,12 +219,37 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> VariableEdges<
     CompoundKey<K>
 > for AdjacencyGraph<K, V, W>
 {
-    fn add_edge(&mut self, edge: DirectedEdge<K, W>) -> Option<DirectedEdge<K, W>> {
-        unimplemented!()
+    fn add_edge(&mut self, edge: DirectedEdge<K, W>) -> Result<Option<DirectedEdge<K, W>>, EdgeSide> {
+        if let Some(_) =  self.vertexes.get(&edge.right()) {
+            if let Some(AdjacencyList {
+                            vertex: _,
+                            list
+                        }) = self.vertexes.get_mut(&edge.left()) {
+                Ok(if let Some(old_edge) = list.remove(&edge.key()) {
+                    list.insert(edge.key(), edge);
+                    Some(old_edge)
+                } else {
+                    list.insert(edge.key(), edge);
+                    None
+                })
+            } else {
+                Err(EdgeSide::Left)
+            }
+        } else {
+            if let Some(_) =  self.vertexes.get(&edge.left()){
+                Err(EdgeSide::Right)
+            } else {
+                Err(EdgeSide::Both)
+            }
+        }
     }
 
     fn remove_edge(&mut self, pair: (&K, &K)) -> Option<DirectedEdge<K, W>> {
-        unimplemented!()
+        if let Some(adjacency) = self.vertexes.get_mut(pair.0) {
+            adjacency.list.remove(&DirectedEdge::<K, W>::generate_key(pair))
+        } else {
+            None
+        }
     }
 }
 
