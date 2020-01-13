@@ -47,6 +47,8 @@ impl<K: Hash + Eq + Clone, W: Add + Sub + Eq + Ord + Copy> DirectedEdge<K, W> {
     }
 }
 
+///`DirectedEdge` implement the Edge trait Specifying the edge key type (CompoundKey). But the vertex key type
+/// and the edge weight type remain generics.
 impl<K: Hash + Eq + Clone, W: Add + Sub + Eq + Ord + Copy> Edge<K, W, CompoundKey<K>> for DirectedEdge<K, W> {
 
     ///Returns a copy of the weight (the weight type is required to implement Copy)

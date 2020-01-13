@@ -164,6 +164,7 @@ impl<K: Hash + Eq + Clone, V> SimpleVertex<K, V> {
     }
 }
 
+///`SimpleVertex` implement the Vertex trait maintaining the key type and the value type generics
 impl<K: Hash + Eq + Clone, V> Vertex<K, V> for SimpleVertex<K, V> {
 
     ///Get the value stored in a vertex
