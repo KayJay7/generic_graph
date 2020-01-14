@@ -145,11 +145,11 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> VariableVertexes<
     /// ```rust
     /// use generic_graph::adjacency_list::AdjacencyGraph;
     /// use generic_graph::{SimpleVertex, VariableVertexes};
-    /// let mut graph = AdjacencyGraph::<i32, i32, i32>::new();
+    /// let mut graph = AdjacencyGraph::<i32, &str, i32>::new();
     ///
-    /// assert_eq!(None, graph.add_vertex(SimpleVertex::new(1, 2)));
-    /// assert_eq!(None, graph.add_vertex(SimpleVertex::new(2, 3)));
-    /// assert_eq!(Some(SimpleVertex::new(1, 2)), graph.add_vertex(SimpleVertex::new(1, 3)))
+    /// assert_eq!(None, graph.add_vertex(SimpleVertex::new(1, "a")));
+    /// assert_eq!(None, graph.add_vertex(SimpleVertex::new(2, "b")));
+    /// assert_eq!(Some(SimpleVertex::new(1, "a")), graph.add_vertex(SimpleVertex::new(1, "c")))
     /// ```
     fn add_vertex(&mut self, vertex: SimpleVertex<K, V>) -> Option<SimpleVertex<K, V>> {
         if let Some(
@@ -185,13 +185,13 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> VariableVertexes<
     /// ```rust
     /// use generic_graph::adjacency_list::AdjacencyGraph;
     /// use generic_graph::{SimpleVertex, VariableVertexes};
-    /// let mut graph = AdjacencyGraph::<i32, i32, i32>::new();
-    /// graph.add_vertex(SimpleVertex::new(1, 2));
-    /// graph.add_vertex(SimpleVertex::new(2, 3));
+    /// let mut graph = AdjacencyGraph::<i32, &str, i32>::new();
+    /// graph.add_vertex(SimpleVertex::new(1, "a"));
+    /// graph.add_vertex(SimpleVertex::new(2, "b"));
     ///
     /// assert_eq!(None, graph.remove_vertex(0));
-    /// assert_eq!(Some(SimpleVertex::new(1, 2)), graph.remove_vertex(1));
-    /// assert_eq!(Some(SimpleVertex::new(2, 3)), graph.remove_vertex(2));
+    /// assert_eq!(Some(SimpleVertex::new(1, "a")), graph.remove_vertex(1));
+    /// assert_eq!(Some(SimpleVertex::new(2, "b")), graph.remove_vertex(2));
     /// assert_eq!(None, graph.remove_vertex(1));
     /// ```
     fn remove_vertex(&mut self, key: K) -> Option<SimpleVertex<K, V>> {
@@ -211,7 +211,6 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> VariableVertexes<
     }
 }
 
-//TODO document the VariableEdges implementation for AdjacencyList
 ///`AdjacencyGraph` uses HashMaps to store edges, allowing fast insertion and removal of the latter
 impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> VariableEdges<
     DirectedVertex<K, V>,
@@ -231,10 +230,10 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> VariableEdges<
     /// use generic_graph::{SimpleVertex, VariableVertexes, VariableEdges};
     /// use generic_graph::adjacency_list::elements::DirectedEdge;
     /// use generic_graph::EdgeSide::Right;
-    /// let mut graph = AdjacencyGraph::<i32, i32, i32>::new();
-    /// graph.add_vertex(SimpleVertex::new(1, 2));
-    /// graph.add_vertex(SimpleVertex::new(2, 3));
-    /// graph.add_vertex(SimpleVertex::new(3, 4));
+    /// let mut graph = AdjacencyGraph::new();
+    /// graph.add_vertex(SimpleVertex::new(1, "a"));
+    /// graph.add_vertex(SimpleVertex::new(2, "b"));
+    /// graph.add_vertex(SimpleVertex::new(3, "c"));
     ///
     /// assert_eq!(Ok(None), graph.add_edge(DirectedEdge::new(1, 2, 0)));
     /// assert_eq!(Ok(None), graph.add_edge(DirectedEdge::new(2, 1, 0)));
@@ -282,9 +281,9 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> VariableEdges<
     /// use generic_graph::{SimpleVertex, VariableVertexes, VariableEdges};
     /// use generic_graph::adjacency_list::elements::DirectedEdge;
     /// use generic_graph::EdgeSide::Right;
-    /// let mut graph = AdjacencyGraph::<i32, i32, i32>::new();
-    /// graph.add_vertex(SimpleVertex::new(1, 2));
-    /// graph.add_vertex(SimpleVertex::new(2, 3));
+    /// let mut graph = AdjacencyGraph::new();
+    /// graph.add_vertex(SimpleVertex::new(1, "a"));
+    /// graph.add_vertex(SimpleVertex::new(2, "b"));
     ///
     /// graph.add_edge(DirectedEdge::new(1, 2, 3));
     ///
@@ -306,11 +305,42 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> VariableEdges<
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::EdgeSide::*;
 
     #[test]
-    fn getters() {
-        let edge = DirectedEdge::new(1, 2, 3);
-        assert_eq!((&1, &2, 3),
-                   (edge.left(), edge.right(), edge.get_weight()));
+    fn add_remove_edge_all_cases() {
+        let mut graph = AdjacencyGraph::<i32, &str, i32>::new();
+        graph.add_vertex(SimpleVertex::new(1, "a"));
+        graph.add_vertex(SimpleVertex::new(2, "b"));
+        graph.add_vertex(SimpleVertex::new(3, "c"));
+        graph.add_vertex(SimpleVertex::new(4, "d"));
+
+        assert_eq!(Ok(None), graph.add_edge(DirectedEdge::new(1, 2, 3)));
+        assert_eq!(Ok(None), graph.add_edge(DirectedEdge::new(2, 1, 3)));
+        assert_eq!(
+            Ok(Some(DirectedEdge::new(2,1, 3))),
+            graph.add_edge(DirectedEdge::new(2,1, 4))
+        );
+        assert_eq!(Err(Left), graph.add_edge(DirectedEdge::new(150, 2, 1)));
+        assert_eq!(Err(Right), graph.add_edge(DirectedEdge::new(3, 2000, 1)));
+        assert_eq!(Err(Both), graph.add_edge(DirectedEdge::new(48, 56, 1)));
+    }
+
+    #[test]
+    fn adjacency_neighboring() {
+        let mut graph = AdjacencyGraph::<i32, &str, i32>::new();
+        graph.add_vertex(SimpleVertex::new(1, "a"));
+        graph.add_vertex(SimpleVertex::new(2, "b"));
+        graph.add_vertex(SimpleVertex::new(3, "c"));
+        graph.add_vertex(SimpleVertex::new(4, "d"));
+        graph.add_edge(DirectedEdge::new(1,2, 3)).expect("Won't fail");
+        graph.add_edge(DirectedEdge::new(2,1, 3)).expect("Won't fail");
+        graph.add_edge(DirectedEdge::new(2,3, 3)).expect("Won't fail");
+        graph.add_edge(DirectedEdge::new(1,3, 3)).expect("Won't fail");
+        graph.add_edge(DirectedEdge::new(4,2, 3)).expect("Won't fail");
+
+        assert_eq!(true, graph.adjacent(&1, &3));
+        assert_eq!(false, graph.adjacent(&3, &1));
+        assert_eq!(false, graph.adjacent(&200, &300));
     }
 }
