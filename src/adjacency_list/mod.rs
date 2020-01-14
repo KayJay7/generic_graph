@@ -212,6 +212,7 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> VariableVertexes<
 }
 
 //TODO document the VariableEdges implementation for AdjacencyList
+///`AdjacencyGraph` uses HashMaps to store edges, allowing fast insertion and removal of the latter
 impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> VariableEdges<
     DirectedVertex<K, V>,
     DirectedEdge<K, W>,
@@ -219,12 +220,38 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> VariableEdges<
     CompoundKey<K>
 > for AdjacencyGraph<K, V, W>
 {
+
+    ///The `add_edge()` method shall return `Ok(None)` if the element was not previously set. Otherwise the element shall be updated (but no the key)
+    /// and the old element shall be returned as `Ok(Some(old_element))`. If one or both of the concerned vertexes are missing an error
+    /// containing an enum specifying which side is missing (`Err(EdgeSide)`)
+    ///
+    /// # Examples
+    /// ```rust
+    /// use generic_graph::adjacency_list::AdjacencyGraph;
+    /// use generic_graph::{SimpleVertex, VariableVertexes, VariableEdges};
+    /// use generic_graph::adjacency_list::elements::DirectedEdge;
+    /// use generic_graph::EdgeSide::Right;
+    /// let mut graph = AdjacencyGraph::<i32, i32, i32>::new();
+    /// graph.add_vertex(SimpleVertex::new(1, 2));
+    /// graph.add_vertex(SimpleVertex::new(2, 3));
+    /// graph.add_vertex(SimpleVertex::new(3, 4));
+    ///
+    /// assert_eq!(Ok(None), graph.add_edge(DirectedEdge::new(1, 2, 0)));
+    /// assert_eq!(Ok(None), graph.add_edge(DirectedEdge::new(2, 1, 0)));
+    /// assert_eq!(Ok(None), graph.add_edge(DirectedEdge::new(3, 2, 0)));
+    /// assert_eq!(
+    ///      Ok(Some(DirectedEdge::new(1, 2, 0))),
+    ///      graph.add_edge(DirectedEdge::new(1, 2, 3))
+    /// );
+    /// assert_eq!(Err(Right), graph.add_edge(DirectedEdge::new(1, 4, 0)));
+    /// ```
     fn add_edge(&mut self, edge: DirectedEdge<K, W>) -> Result<Option<DirectedEdge<K, W>>, EdgeSide> {
         if let Some(_) =  self.vertexes.get(&edge.right()) {
             if let Some(AdjacencyList {
                             vertex: _,
                             list
                         }) = self.vertexes.get_mut(&edge.left()) {
+
                 Ok(if let Some(old_edge) = list.remove(&edge.key()) {
                     list.insert(edge.key(), edge);
                     Some(old_edge)
@@ -232,15 +259,18 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> VariableEdges<
                     list.insert(edge.key(), edge);
                     None
                 })
+
             } else {
                 Err(EdgeSide::Left)
             }
         } else {
+
             if let Some(_) =  self.vertexes.get(&edge.left()){
                 Err(EdgeSide::Right)
             } else {
                 Err(EdgeSide::Both)
             }
+
         }
     }
 

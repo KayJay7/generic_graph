@@ -15,7 +15,7 @@ use std::ops::{Add, Sub};
 ///For two CompoundKey to be equal, the corresponding vertex key of the two must be equal as well.
 /// If two CompoundKey contain the same vertex key, but in different order they are not considered equal
 ///
-///This type can be constructed only via the generate_key() function associated to the type DirectedEdge
+///This type can be constructed only via the `generate_key()` function associated to the type DirectedEdge
 #[derive(Hash, Eq, PartialEq, Clone, Debug)]
 pub struct CompoundKey<K: Hash + Eq + Clone> {
     left: K,

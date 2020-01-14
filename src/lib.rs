@@ -171,6 +171,7 @@ impl<K: Hash + Eq + Clone, V> SimpleVertex<K, V> {
 /// it was impossible to add the edge due to the absence of one of the concerned vertexes.
 ///
 ///Can be used by user defined functions or types for error handling.
+#[derive(Debug, Eq, PartialEq)]
 pub enum EdgeSide {
     Left,
     Right,
