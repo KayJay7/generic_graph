@@ -274,6 +274,26 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> VariableEdges<
         }
     }
 
+    ///The `remove_edge()` method shall return `None` if the element was not found, or `Some(element)` if it was found and removed.
+    ///
+    /// # Examples
+    /// ```rust
+    /// use generic_graph::adjacency_list::AdjacencyGraph;
+    /// use generic_graph::{SimpleVertex, VariableVertexes, VariableEdges};
+    /// use generic_graph::adjacency_list::elements::DirectedEdge;
+    /// use generic_graph::EdgeSide::Right;
+    /// let mut graph = AdjacencyGraph::<i32, i32, i32>::new();
+    /// graph.add_vertex(SimpleVertex::new(1, 2));
+    /// graph.add_vertex(SimpleVertex::new(2, 3));
+    ///
+    /// graph.add_edge(DirectedEdge::new(1, 2, 3));
+    ///
+    /// assert_eq!(
+    ///         Some(DirectedEdge::new(1, 2, 3)),
+    ///         graph.remove_edge((&1, &2))
+    /// );
+    /// assert_eq!(None, graph.remove_edge((&1, &2)));
+    /// ```
     fn remove_edge(&mut self, pair: (&K, &K)) -> Option<DirectedEdge<K, W>> {
         if let Some(adjacency) = self.vertexes.get_mut(pair.0) {
             adjacency.list.remove(&DirectedEdge::<K, W>::generate_key(pair))

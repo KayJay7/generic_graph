@@ -107,7 +107,7 @@ The `add_edge()` method shall return `Ok(None)` if the element was not previousl
 and the old element shall be returned as `Ok(Some(old_element))`. If one or both of the concerned vertexes are missing an error
 containing an enum specifying which side is missing (`Err(EdgeSide)`)
 
-The `remove_edge()` method shall return `None` if the element was not found, or `Some(element)` if it was found.
+The `remove_edge()` method shall return `None` if the element was not found, or `Some(element)` if it was found and removed.
 
 ### Vertex
 
