@@ -20,7 +20,7 @@ pub trait Vertex<K, V>
 {
     fn get_value(&self) -> &V;
 
-    fn get_mutable(&mut self) -> &mut V;
+    fn get_mut_value(&mut self) -> &mut V;
 
     fn key(&self) -> K;
 }
@@ -82,11 +82,11 @@ pub trait DirectedGraph<T, E, K, V, W, C>
 
     fn get_vertex(&self, key: &K) -> Option<&T>;
 
-    fn get_mutable_vertex(&mut self, key: &K) -> Option<&mut T>;
+    fn get_mut_vertex(&mut self, key: &K) -> Option<&mut T>;
 
     fn get_edge(&self, pair: (&K, &K)) -> Option<&E>;
 
-    fn get_mutable_edge(&mut self, pair: (&K, &K)) -> Option<&mut E>;
+    fn get_mut_edge(&mut self, pair: (&K, &K)) -> Option<&mut E>;
 }
 
 ///This trait adds to a Directed graph the methods to add and remove edges
@@ -187,7 +187,7 @@ impl<K: Hash + Eq + Clone, V> Vertex<K, V> for SimpleVertex<K, V> {
     }
 
     ///Get the value as mutable reference
-    fn get_mutable(&mut self) -> &mut V {
+    fn get_mut_value(&mut self) -> &mut V {
         &mut (self.value)
     }
 
@@ -215,7 +215,7 @@ mod tests {
         assert_eq!(vertex.get_value(), &0);
         assert_eq!(vertex.key(), 1);
 
-        *vertex.get_mutable() += 3;
+        *vertex.get_mut_value() += 3;
         assert_eq!(vertex.get_value(), &3);
     }
 }

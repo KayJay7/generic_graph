@@ -103,7 +103,7 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> DirectedGraph<
     }
 
     ///Returns a mutable reference to the vertex identified by the passed key
-    fn get_mutable_vertex(&mut self, key: &K) -> Option<&mut SimpleVertex<K, V>> {
+    fn get_mut_vertex(&mut self, key: &K) -> Option<&mut SimpleVertex<K, V>> {
         if let Some(adjacency) = self.vertexes.get_mut(&key) {
             Some(&mut adjacency.vertex)
         } else {
@@ -121,7 +121,7 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> DirectedGraph<
     }
 
     ///Returns a mutable reference to the edge identified by the passed pair of keys
-    fn get_mutable_edge(&mut self, pair: (&K, &K)) -> Option<&mut DirectedEdge<K, W>> {
+    fn get_mut_edge(&mut self, pair: (&K, &K)) -> Option<&mut DirectedEdge<K, W>> {
         if let Some(adjacency) = self.vertexes.get_mut(pair.0) {
             adjacency.list.get_mut(&DirectedEdge::<K, W>::generate_key(pair))
         } else {
@@ -309,7 +309,7 @@ mod tests {
 
     #[test]
     fn add_remove_edge_all_cases() {
-        let mut graph = AdjacencyGraph::<i32, &str, i32>::new();
+        let mut graph = AdjacencyGraph::new();
         graph.add_vertex(SimpleVertex::new(1, "a"));
         graph.add_vertex(SimpleVertex::new(2, "b"));
         graph.add_vertex(SimpleVertex::new(3, "c"));
@@ -328,11 +328,12 @@ mod tests {
 
     #[test]
     fn adjacency_neighboring() {
-        let mut graph = AdjacencyGraph::<i32, &str, i32>::new();
+        let mut graph = AdjacencyGraph::new();
         graph.add_vertex(SimpleVertex::new(1, "a"));
         graph.add_vertex(SimpleVertex::new(2, "b"));
         graph.add_vertex(SimpleVertex::new(3, "c"));
         graph.add_vertex(SimpleVertex::new(4, "d"));
+        graph.add_vertex(SimpleVertex::new(5, "e"));
         graph.add_edge(DirectedEdge::new(1,2, 3)).expect("Won't fail");
         graph.add_edge(DirectedEdge::new(2,1, 3)).expect("Won't fail");
         graph.add_edge(DirectedEdge::new(2,3, 3)).expect("Won't fail");
@@ -342,5 +343,51 @@ mod tests {
         assert_eq!(true, graph.adjacent(&1, &3));
         assert_eq!(false, graph.adjacent(&3, &1));
         assert_eq!(false, graph.adjacent(&200, &300));
+        assert_eq!(Vec::<&i32>::new(), graph.neighbors(&5));
+        assert_eq!(Vec::<&i32>::new(), graph.leading_to(&5));
+        assert_eq!(Vec::<&i32>::new(), graph.neighbors(&6));
+        assert_eq!(Vec::<&i32>::new(), graph.leading_to(&6));
+
+        let mut neighbors = graph.neighbors(&2);
+        let mut leading_to = graph.leading_to(&2);
+        neighbors.sort();
+        leading_to.sort();
+        assert_eq!(neighbors, vec![&1,&3]);
+        assert_eq!(leading_to, vec![&1,&4]);
+
+        graph.add_vertex(SimpleVertex::new(2, "f"));
+        let mut neighbors = graph.neighbors(&2);
+        let mut leading_to = graph.leading_to(&2);
+        neighbors.sort();
+        leading_to.sort();
+        assert_eq!(neighbors, vec![&1,&3]);
+        assert_eq!(leading_to, vec![&1,&4]);
+        assert_eq!(Some(&SimpleVertex::new(2, "f")), graph.get_vertex(&2));
+    }
+
+    #[test]
+    fn mutable_getters() {
+        let mut graph = AdjacencyGraph::new();
+        graph.add_vertex(SimpleVertex::new(1, 4));
+        graph.add_vertex(SimpleVertex::new(2, 5));
+        graph.add_vertex(SimpleVertex::new(3, 6));
+        graph.add_edge(DirectedEdge::new(1,2, 3)).expect("Won't fail");
+        graph.add_edge(DirectedEdge::new(2,1, 3)).expect("Won't fail");
+
+        assert_eq!(None, graph.get_mut_vertex(&4));
+        assert_eq!(None, graph.get_mut_edge((&4, &4)));
+        assert_eq!(None, graph.get_mut_edge((&2, &3)));
+
+        let vertex = graph.get_mut_vertex(&2);
+        assert_eq!(Some(&mut SimpleVertex::new(2, 5)), vertex);
+        let vertex = vertex.unwrap();
+        *vertex.get_mut_value() += 1;
+        assert_eq!(Some(&SimpleVertex::new(2, 6)), graph.get_vertex(&2));
+
+        let edge = graph.get_mut_edge((&1, &2));
+        assert_eq!(Some(&mut DirectedEdge::new(1,2, 3)), edge);
+        let edge = edge.unwrap();
+        edge.set_weight(12);
+        assert_eq!(Some(&DirectedEdge::new(1,2, 12)), graph.get_edge((&1, &2)));
     }
 }

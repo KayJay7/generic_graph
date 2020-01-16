@@ -26,11 +26,11 @@ pub trait DirectedGraph<T, E, K, V, W, C>
 
     fn get_vertex(&self, key: &K) -> Option<&T>;
 
-    fn get_mutable_vertex(&mut self, key: &K) -> Option<&mut T>;
+    fn get_mut_vertex(&mut self, key: &K) -> Option<&mut T>;
 
     fn get_edge(&self, pair: (&K, &K)) -> Option<&E>;
 
-    fn get_mutable_edge(&mut self, pair: (&K, &K)) -> Option<&mut E>;
+    fn get_mut_edge(&mut self, pair: (&K, &K)) -> Option<&mut E>;
 }
 ```
 
@@ -117,7 +117,7 @@ pub trait Vertex<K, V>
 {
     fn get_value(&self) -> &V;
 
-    fn get_mutable(&mut self) -> &mut V;
+    fn get_mut_value(&mut self) -> &mut V;
 
     fn key(&self) -> K;
 }
