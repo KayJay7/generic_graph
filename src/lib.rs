@@ -80,6 +80,12 @@ pub trait DirectedGraph<T, E, K, V, W, C>
     ///This method returns a vector containing the keys of all the vertexes with by edges leading to the argument
     fn leading_to(&self, to: &K) -> Vec<&K>;
 
+    ///This method returns a vector containing references to the keys of all vertexes in the graph
+    fn get_all_keys(&self) -> Vec<&K>;
+
+    ///This method returns a vector containing the pairs of all edges in the graph
+    fn get_all_pairs(&self) -> Vec<(&K, &K)>;
+
     fn get_vertex(&self, key: &K) -> Option<&T>;
 
     fn get_mut_vertex(&mut self, key: &K) -> Option<&mut T>;

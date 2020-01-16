@@ -55,6 +55,23 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> DirectedGraph<
 > for AdjacencyGraph<K, V, W> {
 
     ///Check if an edge going from the first to the second vertex exists
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use generic_graph::adjacency_list::AdjacencyGraph;
+    /// use generic_graph::{SimpleVertex, VariableVertexes, VariableEdges, DirectedGraph};
+    /// use generic_graph::adjacency_list::elements::DirectedEdge;
+    /// let mut graph = AdjacencyGraph::new();
+    /// graph.add_vertex(SimpleVertex::new(1, "a"));
+    /// graph.add_vertex(SimpleVertex::new(2, "b"));
+    /// graph.add_vertex(SimpleVertex::new(3, "c"));
+    /// graph.add_edge(DirectedEdge::new(2, 3, 3)).expect("Won't fail");
+    /// graph.add_edge(DirectedEdge::new(1, 3, 3)).expect("Won't fail");
+    /// assert_eq!(true, graph.adjacent(&1, &3));
+    /// assert_eq!(false, graph.adjacent(&3, &1));
+    /// assert_eq!(false, graph.adjacent(&2, &1));
+    /// ```
     fn adjacent(&self, from: &K, to: &K) -> bool {
         if let Some(adjacency) = self.vertexes.get(from) {
             if let Some(_) = adjacency.list.get(&DirectedEdge::<K, W>::generate_key((from, to))) {
@@ -67,7 +84,27 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> DirectedGraph<
         }
     }
 
-    ///Returns a Vector containing the keys of the vertexes reached by edges leaving from the vertex identified by the passed key
+    ///Returns a Vector containing the keys of the vertexes reached by edges leaving from the vertex
+    /// identified by the passed key
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use generic_graph::adjacency_list::AdjacencyGraph;
+    /// use generic_graph::{SimpleVertex, VariableVertexes, VariableEdges, DirectedGraph};
+    /// use generic_graph::adjacency_list::elements::DirectedEdge;
+    /// let mut graph = AdjacencyGraph::new();
+    /// graph.add_vertex(SimpleVertex::new(1, "a"));
+    /// graph.add_vertex(SimpleVertex::new(2, "b"));
+    /// graph.add_vertex(SimpleVertex::new(3, "c"));
+    /// graph.add_edge(DirectedEdge::new(2, 3, 3)).expect("Won't fail");
+    /// graph.add_edge(DirectedEdge::new(2, 1, 3)).expect("Won't fail");
+    /// graph.add_edge(DirectedEdge::new(1, 3, 3)).expect("Won't fail");
+    ///
+    /// let mut neighbors = graph.neighbors(&2);
+    /// neighbors.sort();
+    /// assert_eq!(neighbors, vec![&1,&3]);
+    /// ```
     fn neighbors(&self, from: &K) -> Vec<&K> {
         let mut neighbors = Vec::new();
 
@@ -80,7 +117,26 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> DirectedGraph<
         neighbors
     }
 
-    ///Returns a vector containing the keys of the Vertexes from  which an edge leave to reach the vertex identified by the passed key
+    ///Returns a vector containing the keys of the Vertexes from  which an edge leave to reach the
+    /// vertex identified by the passed key
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use generic_graph::adjacency_list::AdjacencyGraph;
+    /// use generic_graph::{SimpleVertex, VariableVertexes, VariableEdges, DirectedGraph};
+    /// use generic_graph::adjacency_list::elements::DirectedEdge;
+    /// let mut graph = AdjacencyGraph::new();
+    /// graph.add_vertex(SimpleVertex::new(1, "a"));
+    /// graph.add_vertex(SimpleVertex::new(2, "b"));
+    /// graph.add_vertex(SimpleVertex::new(3, "c"));
+    /// graph.add_edge(DirectedEdge::new(2, 3, 3)).expect("Won't fail");
+    /// graph.add_edge(DirectedEdge::new(1, 3, 3)).expect("Won't fail");
+    ///
+    /// let mut leading_to = graph.leading_to(&3);
+    /// leading_to.sort();
+    /// assert_eq!(leading_to, vec![&1,&2]);
+    /// ```
     fn leading_to(&self, to: &K) -> Vec<&K> {
         let mut leading = Vec::new();
 
@@ -91,6 +147,66 @@ impl<K: Hash + Eq + Clone, V, W: Add + Sub + Eq + Ord + Copy> DirectedGraph<
         }
 
         leading
+    }
+
+    ///Returns a vector containing the references to keys of all vertexes in the graph
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use generic_graph::adjacency_list::AdjacencyGraph;
+    /// use generic_graph::{SimpleVertex, VariableVertexes, VariableEdges, DirectedGraph};
+    /// use generic_graph::adjacency_list::elements::DirectedEdge;
+    /// let mut graph = AdjacencyGraph::new();
+    /// graph.add_vertex(SimpleVertex::new(1, "a"));
+    /// graph.add_vertex(SimpleVertex::new(2, "b"));
+    /// graph.add_vertex(SimpleVertex::new(3, "c"));
+    /// graph.add_edge(DirectedEdge::new(2, 3, 3)).expect("Won't fail");
+    /// graph.add_edge(DirectedEdge::new(1, 3, 3)).expect("Won't fail");
+    ///
+    /// let mut keys = graph.get_all_keys();
+    /// keys.sort();
+    /// assert_eq!(keys, vec![&1, &2, &3]);
+    /// ```
+    fn get_all_keys(&self) -> Vec<&K> {
+        let mut vertexes = Vec::new();
+
+        for (key, _) in &self.vertexes {
+            vertexes.push(key);
+        }
+
+        vertexes
+    }
+
+    ///Returns a vector containing the pairs of all edges in the graph
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use generic_graph::adjacency_list::AdjacencyGraph;
+    /// use generic_graph::{SimpleVertex, VariableVertexes, VariableEdges, DirectedGraph};
+    /// use generic_graph::adjacency_list::elements::DirectedEdge;
+    /// let mut graph = AdjacencyGraph::new();
+    /// graph.add_vertex(SimpleVertex::new(1, "a"));
+    /// graph.add_vertex(SimpleVertex::new(2, "b"));
+    /// graph.add_vertex(SimpleVertex::new(3, "c"));
+    /// graph.add_edge(DirectedEdge::new(2, 3, 3)).expect("Won't fail");
+    /// graph.add_edge(DirectedEdge::new(1, 3, 3)).expect("Won't fail");
+    ///
+    /// let mut pairs = graph.get_all_pairs();
+    /// pairs.sort();
+    /// assert_eq!(pairs, vec![(&1, &3), (&2, &3)]);
+    /// ```
+    fn get_all_pairs(&self) -> Vec<(&K, &K)> {
+        let mut pairs = Vec::new();
+
+        for (_, adjacency) in &self.vertexes {
+            for (_, edge) in &adjacency.list {
+                pairs.push(edge.get_pair());
+            }
+        }
+
+        pairs
     }
 
     ///Returns a reference to the vertex identified by the passed key
@@ -334,11 +450,11 @@ mod tests {
         graph.add_vertex(SimpleVertex::new(3, "c"));
         graph.add_vertex(SimpleVertex::new(4, "d"));
         graph.add_vertex(SimpleVertex::new(5, "e"));
-        graph.add_edge(DirectedEdge::new(1,2, 3)).expect("Won't fail");
-        graph.add_edge(DirectedEdge::new(2,1, 3)).expect("Won't fail");
-        graph.add_edge(DirectedEdge::new(2,3, 3)).expect("Won't fail");
-        graph.add_edge(DirectedEdge::new(1,3, 3)).expect("Won't fail");
-        graph.add_edge(DirectedEdge::new(4,2, 3)).expect("Won't fail");
+        graph.add_edge(DirectedEdge::new(1, 2, 3)).expect("Won't fail");
+        graph.add_edge(DirectedEdge::new(2, 1, 3)).expect("Won't fail");
+        graph.add_edge(DirectedEdge::new(2, 3, 3)).expect("Won't fail");
+        graph.add_edge(DirectedEdge::new(1, 3, 3)).expect("Won't fail");
+        graph.add_edge(DirectedEdge::new(4, 2, 3)).expect("Won't fail");
 
         assert_eq!(true, graph.adjacent(&1, &3));
         assert_eq!(false, graph.adjacent(&3, &1));
@@ -371,8 +487,8 @@ mod tests {
         graph.add_vertex(SimpleVertex::new(1, 4));
         graph.add_vertex(SimpleVertex::new(2, 5));
         graph.add_vertex(SimpleVertex::new(3, 6));
-        graph.add_edge(DirectedEdge::new(1,2, 3)).expect("Won't fail");
-        graph.add_edge(DirectedEdge::new(2,1, 3)).expect("Won't fail");
+        graph.add_edge(DirectedEdge::new(1, 2, 3)).expect("Won't fail");
+        graph.add_edge(DirectedEdge::new(2, 1, 3)).expect("Won't fail");
 
         assert_eq!(None, graph.get_mut_vertex(&4));
         assert_eq!(None, graph.get_mut_edge((&4, &4)));
